@@ -77,6 +77,28 @@ def _handleMainMenu():
     elif userChoice == 1:
         print("TODO: Create account")
 
+def _getInputUntilCondition(condition, prompt: str, badInputResponse: str) -> str:
+    """
+    Requests the user for some input until the input satisfies the given condition.
+    Parameters:
+        `condition`: A function of the form `func(str) -> bool`. The function should take a string (the
+        user's input) and return true if the input is considered valid, or false if it isn't.
+        `prompt`: A string to prompt the user with. A colon is appended.
+        `badInputResponse`: A string to display when the user's input is not valid.
+    Returns:
+        The user's input after being validated by the condition.
+    """
+
+    #validation loop
+    while True:
+
+        userInput = input("{}: ".format(prompt))
+
+        if condition(userInput):
+            return userInput
+        else:
+            print(badInputResponse)
+
 
 ##############
 #    Main    #
@@ -84,5 +106,4 @@ def _handleMainMenu():
 
 if __name__ == "__main__":
 
-    choice = getUserChoice(["Login", "Create Account"])
-    print("User selected {}".format(choice))
+    userInput = _getInputUntilCondition(lambda string: string == "hello", "Enter hello", "That is not hello")
