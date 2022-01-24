@@ -74,7 +74,7 @@ def _handleMainMenu():
         print("TODO: Login")
 
     #handle account creation
-    elif userChoice == 2:
+    elif userChoice == 1:
         print("TODO: Create account")
 
 
