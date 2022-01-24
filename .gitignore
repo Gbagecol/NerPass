@@ -1,0 +1,3 @@
+data/.accounts
+data/.passwords/*
+__pycache__/
