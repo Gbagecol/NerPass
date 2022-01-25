@@ -35,6 +35,39 @@ def createAccount(username: str, password: str):
     with open(ACCOUNTS_FILE_PATH, 'a') as accountsFile:
         accountsFile.write(username.lower() + "," + str(pwHash)[2:-1] + "," + str(salt)[2:-1] + "\n")
 
+def login(username: str, password: str):
+    """
+    Attempts to log the given user in. If the username doesn't exist or the password is incorrect, the attempt is
+    rejected.
+    Parameters:
+        `username`: The account username.
+        `password`: The account password in plaintext.
+    Returns:
+        A Session object if the login is successful. If not, None is returned.
+    """
+
+    #check username
+    if not doesAccountExist(username):
+        return None
+
+    #load account information
+    with open(ACCOUNTS_FILE_PATH, 'r') as accountsFile:
+
+        csvReader = DictReader(accountsFile) #csv file reader
+
+        #find matching account
+        for row in csvReader:
+            if row["username"] == username:
+
+                password = bytes(password, encoding="utf8") #convert password to bytes
+                storedPwHash = bytes(row["password"], encoding="utf8") #get stored password hash
+
+                #check hash against existing
+                if bc.checkpw(password, storedPwHash):
+                    return "TODO: return a Session"
+                else:
+                    return None
+
 def doesAccountExist(username: str) -> bool:
     """
     Checks if an account exists for the given username.
@@ -73,4 +106,4 @@ def _loadAccounts() -> list:
 
 if __name__ == "__main__":
     
-    createAccount("test", "test")
+    print(login("tlorenz", "password"))
