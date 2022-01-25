@@ -12,6 +12,7 @@ from getpass import getpass
 ###################
 
 MAIN_MENU_OPTIONS = ["Log In", "Create Account"] #cli prompts for main menu
+PASSWORD_MENU_OPTIONS = ["Retrieve Password", "Add New Password", "Quit"] #cli prompts for password management menu
 
 
 #################
@@ -88,6 +89,26 @@ def _handleMainMenu():
     print("-" * len(welcomeString))
     print(welcomeString)
     print("-" * len(welcomeString))
+
+def _handlePasswordMenu(session: ma.Session):
+    """
+    Handles the password management menu.
+    Parameters:
+        `session`: A Session object representing the current user's session.
+    """
+
+    userChoice = getUserChoice(PASSWORD_MENU_OPTIONS) #present menu
+
+    #handle password lookup
+    if userChoice == 0:
+        print("TODO: Handle password lookup")
+
+    #handle adding password
+    elif userChoice == 1:
+        print("TODO: Handle adding password")
+
+    elif userChoice == 2:
+        print("TODO: Handle exit")
 
 def _handleCreateAccount() -> ma.Session:
     """
