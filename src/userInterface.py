@@ -3,6 +3,7 @@ Module to handle the command line interface for the program.
 """
 
 import manageAccounts as ma
+import sys
 
 from getpass import getpass
 
@@ -11,7 +12,7 @@ from getpass import getpass
 #    Constants    #
 ###################
 
-MAIN_MENU_OPTIONS = ["Log In", "Create Account"] #cli prompts for main menu
+MAIN_MENU_OPTIONS = ["Log In", "Create Account", "Quit"] #cli prompts for main menu
 PASSWORD_MENU_OPTIONS = ["Retrieve Password", "Add New Password", "Quit"] #cli prompts for password management menu
 
 
@@ -84,6 +85,11 @@ def _handleMainMenu():
     elif userChoice == 1:
         session = _handleCreateAccount() #create account and get session
         welcomeString = "Welcome, {}!".format(session.username)
+
+    #handle quit
+    elif userChoice == 2:
+        print("Goodbye!")
+        sys.exit(0)
 
     print()
     print("-" * len(welcomeString))
