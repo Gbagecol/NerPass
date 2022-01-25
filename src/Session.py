@@ -38,15 +38,24 @@ class Session():
     #    Methods    #
     #################
 
-    def addPassword(self, pwName: str, password: str):
+    def addPassword(self, pwName: str, password: str) -> bool:
         """
-        Adds a new password entry to the current user's password list.
+        Attempts to add a new password entry to the current user's password list. This fails if an entry already exists
+        for a similar name.
         Parameters:
             `pwName`: A name to associate with the new password.
             `password`: The plaintext password.
+        Returns:
+            True if the password is successfully added. If an entry already existed for the given name, false is
+            returned.
         """
 
-        pass
+        #check for existing entry
+        if self._doesPasswordEntryExist(pwName):
+            return False
+        else:
+            self._passwordEntries.append({"pwName": pwName, "password": password}) #add entry to list
+            return True
 
     def _loadPasswords(self) -> list:
         """
@@ -70,6 +79,17 @@ class Session():
             self._generatePasswordFile() #generate new file
             return []
 
+    def _doesPasswordEntryExist(self, pwName: str) -> bool:
+        """
+        Checks if there is already a password entry for a similar name.
+        Parameters:
+            `pwName`: The name to check for.
+        Returns:
+            True if there is an entry for a similar name, false otherwise.
+        """
+
+        return pwName in [row["pwName"] for row in self._passwordEntries]
+
     def _generatePasswordFile(self):
         """
         Generates a new password file for the current user if it doesn't exist.
@@ -87,4 +107,6 @@ class Session():
 if __name__ == "__main__":
 
     session = Session("test", "test")
+    print(session._passwordEntries)
+    print(session.addPassword("test2", "test"))
     print(session._passwordEntries)

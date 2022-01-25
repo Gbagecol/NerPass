@@ -112,4 +112,4 @@ def _loadAccounts() -> list:
 if __name__ == "__main__":
     
     session = login("tlorenz", "password")
-    print(session.username)
+    print(session.USERNAME)
