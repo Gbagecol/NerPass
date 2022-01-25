@@ -2,6 +2,11 @@
 Module to handle the command line interface for the program.
 """
 
+import manageAccounts as ma
+
+from getpass import getpass
+
+
 ###################
 #    Constants    #
 ###################
@@ -75,9 +80,45 @@ def _handleMainMenu():
 
     #handle account creation
     elif userChoice == 1:
-        print("TODO: Create account")
+        _handleCreateAccount()
 
-def _getInputUntilCondition(condition, prompt: str, badInputResponse: str) -> str:
+def _handleCreateAccount():
+    """
+    Handles the account creation option from the main menu.
+    """
+
+    #get username
+    username = _getInputUntilCondition(
+            lambda username: not ma.doesAccountExist(username), #check if this username already exists
+            "Enter a username",
+            "That username already exists. Please enter another username."
+    )
+
+    password = _getAndConfirmPassword() #get password
+
+    ma.createAccount(username, password) #create account
+
+    print("Account created successfully.")
+
+def _getAndConfirmPassword() -> str:
+    """
+    Prompts the user to enter a password, then to confirm it.
+    Returns:
+        The plaintext password entered by the user.
+    """
+
+    #validation loop
+    while True:
+
+        password1 = getpass("Enter a password (Please make this STRONG): ")
+        password2 = getpass("Enter your password again: ")
+
+        if password1 == password2:
+            return password1
+        else:
+            print("Those passwords do not match. Please enter them again.")
+
+def _getInputUntilCondition(condition, prompt: str, badInputResponse: str, useGetpass=False) -> str:
     """
     Requests the user for some input until the input satisfies the given condition.
     Parameters:
@@ -85,6 +126,7 @@ def _getInputUntilCondition(condition, prompt: str, badInputResponse: str) -> st
         user's input) and return true if the input is considered valid, or false if it isn't.
         `prompt`: A string to prompt the user with. A colon is appended.
         `badInputResponse`: A string to display when the user's input is not valid.
+        `useGetpass`: Whether the input() function should be replaced with the getpass() function. Defaults to false.
     Returns:
         The user's input after being validated by the condition.
     """
@@ -92,7 +134,10 @@ def _getInputUntilCondition(condition, prompt: str, badInputResponse: str) -> st
     #validation loop
     while True:
 
-        userInput = input("{}: ".format(prompt))
+        if not useGetpass:
+            userInput = input("{}: ".format(prompt))
+        else:
+            userInput = getpass("{}: ".format(prompt))
 
         if condition(userInput):
             return userInput
@@ -106,4 +151,5 @@ def _getInputUntilCondition(condition, prompt: str, badInputResponse: str) -> st
 
 if __name__ == "__main__":
 
-    userInput = _getInputUntilCondition(lambda string: string == "hello", "Enter hello", "That is not hello")
+    password = _getAndConfirmPassword()
+    print(password)
