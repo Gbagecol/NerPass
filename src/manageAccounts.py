@@ -14,6 +14,33 @@ from csv import DictReader
 ACCOUNTS_FILE_PATH = "../data/.accounts" #path to accounts file
 
 
+#######################
+#    Session Class    #
+#######################
+
+class Session():
+    """
+    A class to manage the current login session.
+    """
+
+    #####################
+    #    Constructor    #
+    #####################
+
+    def __init__(self, username: str, pwHash: bytes):
+        """
+        Creates a new Session object.
+        Parameters:
+            `username`: The username for the current user.
+            `pwHash`: The current user's password hash as bytes.
+        """
+
+        #init
+
+        self.username = username
+        self.pwHash = pwHash
+
+
 #################
 #    Methods    #
 #################
@@ -64,7 +91,7 @@ def login(username: str, password: str):
 
                 #check hash against existing
                 if bc.checkpw(password, storedPwHash):
-                    return "TODO: return a Session"
+                    return Session(username, storedPwHash) #return Session object
                 else:
                     return None
 
@@ -106,4 +133,5 @@ def _loadAccounts() -> list:
 
 if __name__ == "__main__":
     
-    print(login("tlorenz", "password"))
+    session = login("tlorenz", "password")
+    print(session.username)
