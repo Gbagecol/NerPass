@@ -5,6 +5,7 @@ Module to manage user accounts.
 import bcrypt as bc
 
 from csv import DictReader
+from Session import Session
 
 
 ###################
@@ -12,33 +13,6 @@ from csv import DictReader
 ###################
 
 ACCOUNTS_FILE_PATH = "../data/.accounts" #path to accounts file
-
-
-#######################
-#    Session Class    #
-#######################
-
-class Session():
-    """
-    A class to manage the current login session.
-    """
-
-    #####################
-    #    Constructor    #
-    #####################
-
-    def __init__(self, username: str, pwHash: bytes):
-        """
-        Creates a new Session object.
-        Parameters:
-            `username`: The username for the current user.
-            `pwHash`: The current user's password hash as bytes.
-        """
-
-        #init
-
-        self.username = username
-        self.pwHash = pwHash
 
 
 #################
