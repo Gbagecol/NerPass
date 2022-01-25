@@ -53,6 +53,8 @@ def createAccount(username: str, password: str):
     Parameters:
         `username`: The new account's username.
         `password`: A plaintext password for the new account.
+    Returns:
+        A Session object.
     """
 
     salt = bc.gensalt() #generate salt for password
@@ -61,6 +63,8 @@ def createAccount(username: str, password: str):
     #save account info
     with open(ACCOUNTS_FILE_PATH, 'a') as accountsFile:
         accountsFile.write(username.lower() + "," + str(pwHash)[2:-1] + "," + str(salt)[2:-1] + "\n")
+
+    return Session(username, pwHash)
 
 def login(username: str, password: str):
     """
