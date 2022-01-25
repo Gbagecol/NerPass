@@ -76,15 +76,24 @@ def _handleMainMenu():
 
     #handle login
     if userChoice == 0:
-        print("TODO: Login")
+        session = _handleLogin() #login and get session
+        welcomeString = "Welcome back, {}!".format(session.username)
 
     #handle account creation
     elif userChoice == 1:
-        _handleCreateAccount()
+        session = _handleCreateAccount() #create account and get session
+        welcomeString = "Welcome, {}!".format(session.username)
 
-def _handleCreateAccount():
+    print()
+    print("-" * len(welcomeString))
+    print(welcomeString)
+    print("-" * len(welcomeString))
+
+def _handleCreateAccount() -> ma.Session:
     """
     Handles the account creation option from the main menu.
+    Returns:
+        A Session object representing the new user's current session.
     """
 
     #get username
@@ -96,9 +105,32 @@ def _handleCreateAccount():
 
     password = _getAndConfirmPassword() #get password
 
-    ma.createAccount(username, password) #create account
+    session = ma.createAccount(username, password) #create account
 
     print("Account created successfully.")
+
+    return session
+
+def _handleLogin() -> ma.Session:
+    """
+    Handles the login option from the main menu.
+    Returns:
+        A Session object representing the current user's session.
+    """
+
+    #validation loop
+    while True:
+
+        username = input("Enter your username: ") #get username
+        password = getpass("Enter your password: ")
+
+        session = ma.login(username, password) #attempt login
+
+        if session is not None:
+            print("Logged in successfully.")
+            return session
+        else:
+            print("That username or password is incorrect. Please try again.")
 
 def _getAndConfirmPassword() -> str:
     """
