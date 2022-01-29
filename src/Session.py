@@ -2,6 +2,7 @@
 Module for Session class to represent and manipulate a current user's login session.
 """
 
+from Crypto.Random import get_random_bytes
 from csv import DictReader
 
 
@@ -31,7 +32,9 @@ class Session():
         self.USERNAME = username #current user's username
         self.PW_HASH = pwHash #current user's password hash
         self.PW_FILE_PATH = "../data/.passwords/{}".format(self.USERNAME) #path to this user's password file
-        self._passwordEntries = self._loadPasswords() #list of user's password entries
+        self.KEY_FILE_PATH = "../data/.keys/{}".format(self.USERNAME) #path to this user's key
+        self._PASSWORD_ENTRIES = self._loadPasswords() #list of user's existing password entries
+        self._newEntries = [] #any new entries from this session
 
 
     #################
@@ -54,8 +57,15 @@ class Session():
         if self._doesPasswordEntryExist(pwName):
             return False
         else:
-            self._passwordEntries.append({"pwName": pwName, "password": password}) #add entry to list
+            self._newEntries.append({"pwName": pwName, "password": password}) #add entry to list
             return True
+
+    def save(self):
+        """
+        Encrypts any new passwords created this session and saves them to the user's password file.
+        """
+
+        pass
 
     def _loadPasswords(self) -> list:
         """
@@ -88,7 +98,7 @@ class Session():
             True if there is an entry for a similar name, false otherwise.
         """
 
-        return pwName in [row["pwName"] for row in self._passwordEntries]
+        return pwName in [row["pwName"] for row in self._PASSWORD_ENTRIES]
 
     def _generatePasswordFile(self):
         """
@@ -99,6 +109,15 @@ class Session():
         with open(self.PW_FILE_PATH, 'w') as passwordFile:
             passwordFile.write("pwName,password\n")
 
+    def _generateKeyFile(self):
+        """
+        Generates a new AES key for the current user, encrypts it, and saves it to a key file.
+        """
+
+        #generate and write key
+        with open(self.KEY_FILE_PATH, 'w') as keyFile:
+            keyFile.write(str(get_random_bytes(128)[2:-1]))
+
 
 ##############
 #    Main    #
@@ -107,6 +126,6 @@ class Session():
 if __name__ == "__main__":
 
     session = Session("test", "test")
-    print(session._passwordEntries)
+    print(session._PASSWORD_ENTRIES)
     print(session.addPassword("test2", "test"))
-    print(session._passwordEntries)
+    print(session._PASSWORD_ENTRIES)
