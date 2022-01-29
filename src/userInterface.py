@@ -77,12 +77,12 @@ def _handleMainMenu():
     #handle login
     if userChoice == 0:
         session = _handleLogin() #login and get session
-        welcomeString = "Welcome back, {}!".format(session.username)
+        welcomeString = "Welcome back, {}!".format(session.USERNAME)
 
     #handle account creation
     elif userChoice == 1:
         session = _handleCreateAccount() #create account and get session
-        welcomeString = "Welcome, {}!".format(session.username)
+        welcomeString = "Welcome, {}!".format(session.USERNAME)
 
     print()
     print("-" * len(welcomeString))
