@@ -19,12 +19,13 @@ class Session():
     #    Constructor    #
     #####################
 
-    def __init__(self, username: str, pwHash: bytes):
+    def __init__(self, username: str, pwHash: bytes, newUser=False):
         """
         Creates a new Session object.
         Parameters:
             `username`: The username for the current user.
             `pwHash`: The current user's password hash as bytes.
+            `newUser`: Whether this session is for a newly created user or not. Defaults to false.
         """
 
         #init
@@ -35,6 +36,11 @@ class Session():
         self.KEY_FILE_PATH = "../data/.keys/{}".format(self.USERNAME) #path to this user's key
         self._PASSWORD_ENTRIES = self._loadPasswords() #list of user's existing password entries
         self._newEntries = [] #any new entries from this session
+
+        #generate password and key files if this is a new account
+        if newUser:
+            self._generatePasswordFile()
+            self._generateKeyFile()
 
 
     #################
@@ -86,7 +92,6 @@ class Session():
 
         #if file doesn't exist
         except FileNotFoundError:
-            self._generatePasswordFile() #generate new file
             return []
 
     def _doesPasswordEntryExist(self, pwName: str) -> bool:
@@ -116,7 +121,7 @@ class Session():
 
         #generate and write key
         with open(self.KEY_FILE_PATH, 'w') as keyFile:
-            keyFile.write(str(get_random_bytes(128)[2:-1]))
+            keyFile.write(str(get_random_bytes(128))[2:-1])
 
 
 ##############

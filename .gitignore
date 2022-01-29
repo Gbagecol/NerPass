@@ -1,3 +1,4 @@
 data/.accounts
 data/.passwords/*
+data/.keys/*
 __pycache__/

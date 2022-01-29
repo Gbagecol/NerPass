@@ -38,7 +38,7 @@ def createAccount(username: str, password: str):
     with open(ACCOUNTS_FILE_PATH, 'a') as accountsFile:
         accountsFile.write(username.lower() + "," + str(pwHash)[2:-1] + "," + str(salt)[2:-1] + "\n")
 
-    return Session(username, pwHash)
+    return Session(username, pwHash, newUser=True)
 
 def login(username: str, password: str):
     """
