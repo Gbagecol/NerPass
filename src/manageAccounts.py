@@ -3,8 +3,25 @@ Module to manage user accounts.
 """
 
 import bcrypt as bc
+import logging
 
 from csv import DictReader
+
+
+######################
+#    Module Setup    #
+######################
+
+logger = logging.getLogger(__name__) #create logger
+logFormatter = logging.Formatter("[(%(name)s) %(asctime)s %(levelname)s] %(message)s", datefmt="%m/%d/%Y %I:%M:%S")
+logHandler = logging.StreamHandler() #create handler for console
+
+#init handler
+logHandler.setLevel(logging.DEBUG)
+logHandler.setFormatter(logFormatter)
+
+logger.addHandler(logHandler) #set handler
+logger.setLevel(logging.DEBUG)
 
 
 ###################
@@ -57,6 +74,8 @@ def createAccount(username: str, password: str):
         A Session object.
     """
 
+    logger.info(f"Creating account for new user {username}")
+
     salt = bc.gensalt() #generate salt for password
     pwHash = bc.hashpw(bytes(password, encoding="utf-8"), salt) #hash password
 
@@ -77,8 +96,11 @@ def login(username: str, password: str):
         A Session object if the login is successful. If not, None is returned.
     """
 
+    logger.info(f"User {username} attempting login")
+
     #check username
     if not doesAccountExist(username):
+        logger.info(f"User {username} login attempt was unsuccessful")
         return None
 
     #load account information
@@ -95,8 +117,10 @@ def login(username: str, password: str):
 
                 #check hash against existing
                 if bc.checkpw(password, storedPwHash):
+                    logger.info(f"User {username} logged in successfully")
                     return Session(username, storedPwHash) #return Session object
                 else:
+                    logger.info(f"User {username} login attempt was unsuccessful")
                     return None
 
 def doesAccountExist(username: str) -> bool:
@@ -116,6 +140,8 @@ def _loadAccounts() -> list:
     Returns:
         A list of all existing usernames.
     """
+
+    logger.debug("Loading accounts")
 
     users = [] #username list
 

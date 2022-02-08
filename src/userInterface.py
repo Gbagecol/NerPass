@@ -3,8 +3,25 @@ Module to handle the command line interface for the program.
 """
 
 import manageAccounts as ma
+import logging
 
 from getpass import getpass
+
+
+######################
+#    Module Setup    #
+######################
+
+logger = logging.getLogger(__name__) #create logger
+logFormatter = logging.Formatter("[(%(name)s) %(asctime)s %(levelname)s] %(message)s", datefmt="%m/%d/%Y %I:%M:%S")
+logHandler = logging.StreamHandler() #create handler for console
+
+#init handler
+logHandler.setLevel(logging.DEBUG)
+logHandler.setFormatter(logFormatter)
+
+logger.addHandler(logHandler) #set handler
+logger.setLevel(logging.DEBUG)
 
 
 ###################
@@ -77,12 +94,12 @@ def _handleMainMenu():
     #handle login
     if userChoice == 0:
         session = _handleLogin() #login and get session
-        welcomeString = "Welcome back, {}!".format(session.username)
+        welcomeString = f"Welcome back, {session.username}!"
 
     #handle account creation
     elif userChoice == 1:
         session = _handleCreateAccount() #create account and get session
-        welcomeString = "Welcome, {}!".format(session.username)
+        welcomeString = f"Welcome, {session.username}!"
 
     print()
     print("-" * len(welcomeString))
