@@ -2,8 +2,28 @@
 Module for Session class to represent and manipulate a current user's login session.
 """
 
+import bcrypt
+import logging
+
+from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 from csv import DictReader
+
+
+######################
+#    Module Setup    #
+######################
+
+logger = logging.getLogger(__name__) #create logger
+logFormatter = logging.Formatter("[(%(name)s) %(asctime)s %(levelname)s] %(message)s", datefmt="%m/%d/%Y %I:%M:%S")
+logHandler = logging.StreamHandler() #create handler for console
+
+#init handler
+logHandler.setLevel(logging.DEBUG)
+logHandler.setFormatter(logFormatter)
+
+logger.addHandler(logHandler) #set handler
+logger.setLevel(logging.DEBUG)
 
 
 #######################
@@ -19,12 +39,13 @@ class Session():
     #    Constructor    #
     #####################
 
-    def __init__(self, username: str, pwHash: bytes, newUser=False):
+    def __init__(self, username: str, pwHash: bytes, salt: bytes, newUser=False):
         """
         Creates a new Session object.
         Parameters:
             `username`: The username for the current user.
             `pwHash`: The current user's password hash as bytes.
+            `salt`: The salt from the password hash as bytes.
             `newUser`: Whether this session is for a newly created user or not. Defaults to false.
         """
 
@@ -32,6 +53,7 @@ class Session():
 
         self.USERNAME = username #current user's username
         self.PW_HASH = pwHash #current user's password hash
+        self.SALT = salt #current user's salt
         self.PW_FILE_PATH = "../data/.passwords/{}".format(self.USERNAME) #path to this user's password file
         self.KEY_FILE_PATH = "../data/.keys/{}".format(self.USERNAME) #path to this user's key
         self._PASSWORD_ENTRIES = self._loadPasswords() #list of user's existing password entries
@@ -110,6 +132,8 @@ class Session():
         Generates a new password file for the current user if it doesn't exist.
         """
 
+        logger.debug("Generating password file")
+
         #write file header
         with open(self.PW_FILE_PATH, 'w') as passwordFile:
             passwordFile.write("pwName,password\n")
@@ -119,9 +143,19 @@ class Session():
         Generates a new AES key for the current user, encrypts it, and saves it to a key file.
         """
 
+        logger.debug("Generating key file")
+
+        #generate key from password to encrypt aes key
+        keyFileKey = bcrypt.kdf(password=self.PW_HASH, salt=self.SALT, desired_key_bytes=32, rounds=100)
+
+        pwFileKey = get_random_bytes(32) #generate aes key to encrypt password file
+        cipher = AES.new(keyFileKey, AES.MODE_EAX) #create aes cipher for key
+
+        ciphertext, tag = cipher.encrypt_and_digest(pwFileKey) #encrypt key
+
         #generate and write key
         with open(self.KEY_FILE_PATH, 'w') as keyFile:
-            keyFile.write(str(get_random_bytes(128))[2:-1])
+            keyFile.write(str(pwFileKey)[2:-1])
 
 
 ##############

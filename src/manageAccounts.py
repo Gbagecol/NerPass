@@ -57,7 +57,7 @@ def createAccount(username: str, password: str):
     with open(ACCOUNTS_FILE_PATH, 'a') as accountsFile:
         accountsFile.write(username.lower() + "," + str(pwHash)[2:-1] + "," + str(salt)[2:-1] + "\n")
 
-    return Session(username, pwHash, newUser=True)
+    return Session(username, pwHash, salt, newUser=True)
 
 def login(username: str, password: str):
     """
@@ -92,7 +92,7 @@ def login(username: str, password: str):
                 #check hash against existing
                 if bc.checkpw(password, storedPwHash):
                     logger.info(f"User {username} logged in successfully")
-                    return Session(username, storedPwHash) #return Session object
+                    return Session(username, bytes(row["salt"], encoding="utf8"), storedPwHash) #return Session object
                 else:
                     logger.info(f"User {username} login attempt was unsuccessful")
                     return None
